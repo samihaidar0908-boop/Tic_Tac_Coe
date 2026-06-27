@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- meta charset -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Co</title>
+    <!-- rel fav , stylesheet, script tailwind and script es module js  -->
+    <link rel="shortcut icon" href="img/image.png" type="image/x-icon">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="src/style.css">
+    <script type="module" src="../src/index.js" defer></script>
+</head>
+<body class="bg-gray-300">
+    <main>
+        <!-- annouence the winner and score-->
+        <header class="relative">
+            <div class="text-center">
+                <span class="inline-block text-2xl mt-5 inset-0 font-bold absolute" id="winner"></span>
+                <span id="scoreX" class="font-bold inline-block absolute left-0 text-2xl text-red-500"></span>
+                <span id="scoreO" class="font-bold inline-block absolute right-0 text-2xl text-blue-500"></span>
+            </div>
+        </header>
+        <div class="flex justify-center flex-col items-center h-screen">
+            <!-- pop up dialog -->
+            <dialog id="dialogForm" class="m-auto rounded-2xl shadow-2xl backdrop:bg-black/70 border-white border-3">
+                <form action id="form" class="p-8 bg-gray-500" novalidate>
+                    <h2 class="text-3xl font-bold mb-6 text-white">Welcome tu Tic Tac co BarWb</h2>
+                    <div class="flex flex-col gap-6">
+                        <div class="flex flex-row gap-6">
+                            <label for="inputP1" class="w-1/2 text-xl text-red-500">Input Name Player(X)</label>
+                            <div class="flex flex-col relative">
+                                <input type="text" id="inputP1" placeholder="Name Player(X)" class="w-full px-4 outline-none text-white placeholder:text-white border-white border-2 relative" required> 
+                                <span id="errX" class="text-red-500 hidden absolute top-full left-0 font-bold text-sm">field the input!</span>  
+                            </div>                    
+                        </div>
+                        <div class="flex flex-row gap-6">
+                            <label for="inputP2" class="w-1/2 text-xl text-blue-500">Input Name Player(O)</label>
+                            <div class="flex flex-col relative">
+                                <input type="text" id="inputP2" placeholder="Name Player(O)" class="w-full px-4 outline-none text-white placeholder:text-white border-white border-2" required>
+                                <span id="errO" class="font-bold text-red-500 absolute top-full left-0 mt-1 hidden font-bold text-sm">field the input!</span>
+                            </div>
+                        </div>                                
+                    <button type="submit" id="startBtn" class="w-full text-white font-bold py-3 px-4 rounded-lg hover:bg-zinc-600 transition-colors text-xl mt-4 cursor-pointer">START GAME</button>    
+                    </div>
+                </form>
+            </dialog>
+
+            <!-- reset ddialog -->
+           <dialog id="resetAlert" class="m-auto rounded-2xl shadow-2xl backdrop:bg-black/70 border-white border-3 z-10">
+                <form method="dialog" id="resetForm" class="p-8 bg-gray-500">
+                    <h2 class="text-3xl font-bold mb-6 text-white">Are u sure wanna reset? (player name and score reset)</h2>
+                    <div class="flex flex-row gap-6">
+                        <button class="text-white font-sm py-3 px-4 rounded-lg bg-blue-500 hover:bg-blue-700 transition-colors text-xl mt-4 cursor-pointer">Cancel</button>
+                        <button id="resetConfirm" class="bg-red-500 font-sm py-3 px-4 rounded-lg hover:bg-red-700 transition-colors text-xl text-white mt-4 cursor-pointer">Reset</button>
+                    </div>
+                </form>
+           </dialog>
+            
+            <!-- main tic tac coe -->
+            <div class="bg-zinc-700 grid grid-cols-3 border-2 border-white relative">
+                <div id="winningLine" class="absolute z-10 transition-all duration-500 ease-in-out h-2 w-0 hidden rounded-full"></div>
+                <div class="border-2 border-white w-28 h-28 w-28 h-28">
+                    <button class="clicked w-28 h-28 text-4xl " data-index="0"></button>
+                </div>
+                <div class="border-2 border-white w-28 h-28">
+                    <button class="clicked w-28 h-28  text-4xl " data-index="1"></button>
+                </div>
+                <div class="border-2 border-white w-28 h-28">
+                    <button class="clicked w-28 h-28  text-4xl " data-index="2"></button>
+                </div>
+                <div class="border-2 border-white w-28 h-28">
+                    <button class="clicked w-28 h-28  text-4xl " data-index="3"></button>
+                </div>      
+                <div class="border-2 border-white w-28 h-28">
+                    <button class="clicked w-28 h-28  text-4xl " data-index="4"></button>
+                </div>
+                <div class="border-2 border-white w-28 h-28">
+                    <button class="clicked w-28 h-28  text-4xl " data-index="5"></button>
+                </div>
+                <div class="border-2 border-white w-28 h-28">
+                    <button class="clicked w-28 h-28  text-4xl " data-index="6"></button>
+                </div>
+                <div class="border-2 border-white w-28 h-28">
+                    <button class="clicked w-28 h-28  text-4xl " data-index="7"></button>
+                </div>
+                <div class="border-2 border-white w-28 h-28">
+                    <button class="clicked w-28 h-28  text-4xl " data-index="8"></button>
+                </div>
+            </div>
+            
+            <!-- button play turn, play again, and reset -->
+            <div class="flex flex-col justify-center items-center gap-5">
+                <span id="turn" class="block text-center text-white"></span>
+                <button id="playAgain" class="invisible cursor-pointer text-center px-2 py-2 m-auto bg-blue-500 text-white rounded-xl transition-colors duration-300 hover:bg-blue-700">Play Again</button>
+            </div>
+                <button id="resetAll" class="hidden w-[80px] cursor-pointer m-auto bg-red-500 text-white rounded-xl absolute px-4 py-2 bottom-4 right-0 left-0 transition-colors duration-300 hover:bg-red-700">Reset</button>
+        </div>
+    </main> 
+</body>
+</html>
