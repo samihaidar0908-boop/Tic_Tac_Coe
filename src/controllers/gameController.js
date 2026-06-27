@@ -108,9 +108,11 @@ const gameController = (() => {
         }         
         const placeMark = gameBoard.placePawn(indexBoard, nowPlayer.mark);            
 
-        if (!placeMark) return {
-            status : 'refuse'
-        };
+        if (!placeMark)  {
+            return {
+                status : 'refuse'
+            };
+        }
 
         winLine = checkWinner();
 

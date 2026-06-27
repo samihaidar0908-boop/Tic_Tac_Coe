@@ -239,7 +239,7 @@ const displayController = (() => {
             /* NOTE:
             visual shrink effect caused by parent-border layout.
             looks kinda cool, don't touch for now. 
-            if u want to return animation constant, remove if and const success such it will 
+            if u want to return animation constant, remove if and const result such it will 
             looks animation when clicked
             */
             if (result.status === 'refuse') return;
