@@ -17,10 +17,15 @@ const gameController = (() => {
             player1,
             player2,
             currentPlayer: nowPlayer.mark,
+            currentPlayerName: nowPlayer.name,
             endGame,
             boardActive,
             winLine,
-            winnerMark
+            winnerMark,
+            winner: winnerMark
+            ? (winnerMark === "X" ? player1 : player2)
+            : null,
+            status: endGame ? (winnerMark ? "win" : "draw") : "playing"
         }
     }
 
@@ -101,7 +106,6 @@ const gameController = (() => {
         }
 
         if (endGame) {
-            console.log("game has been end");
             return {
                 status : "ended"
             }
@@ -117,7 +121,6 @@ const gameController = (() => {
         winLine = checkWinner();
 
         if (winLine) {
-            console.log(`${nowPlayer.name} winner`);
             endGame = true;
             nowPlayer.score++;
 
@@ -139,7 +142,6 @@ const gameController = (() => {
         }
     
         turn();
-        console.log(`turn in ${nowPlayer.name}!`);
         return {
             status : "playing",
             currentPlayer : nowPlayer

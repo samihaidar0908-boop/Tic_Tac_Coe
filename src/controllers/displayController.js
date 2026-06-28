@@ -112,15 +112,28 @@ const displayController = (() => {
         }
     }
 
+
     const updateTurn = (player) => {
         displayTurn.innerText = `Turn : ${player.name}`;
         fadeIn(displayTurn);
     }
 
-    const showWinner = (result) => {
-        displayWin.innerHTML = `<span class="bg-green-500 text-white px-4 py-2 rounded-xl">${result.winner.name} win!</span>`;
-        displayTurn.innerHTML = `<span class="text-red-500 font-bold">Game Has Ended</span>`;
+    const renderWinner = (winnerName) => {
+        displayWin.innerHTML =
+        `<span class="bg-green-500 text-white px-4 py-2 rounded-xl">
+            ${winnerName} win!
+        </span>`;
 
+        displayTurn.innerHTML =
+        `<span class="text-red-500 font-bold">
+            Game Has Ended
+        </span>`;
+
+        playAgain.classList.remove("invisible");
+    }
+
+    const showWinner = (result) => {
+        renderWinner(result.winner.name);
         drawWinningLine(result.line, result.winner.mark);
 
         playAgain.classList.remove('invisible');
@@ -132,9 +145,18 @@ const displayController = (() => {
         updateScoreUI();
     }
 
+    const renderDraw = () => {
+        displayWin.innerHTML = "<span class='bg-gray-500 text-white px-4 py-2 rounded-xl font-bold'>DRAW</span>";
+        displayTurn.innerHTML =
+        `<span class="text-red-500 font-bold">
+            Game Has Ended
+        </span>`;
+
+        playAgain.classList.remove("invisible");
+    }
+
     const showDraw = () => {
-        displayWin.innerText ='DRAW';
-        displayTurn.innerHTML = `<span class="text-red-500 font-bold">Game Has Ended</span>`;
+        renderDraw()
 
         playAgain.classList.remove('invisible');
 
@@ -156,11 +178,12 @@ const displayController = (() => {
         lineDiv.classList.remove('bg-red-500', 'bg-blue-500');
     }
 
+     
+
     const saveData = storageController.load();
 
     if (saveData) {
         gameController.loadGame(saveData);
-
         if (saveData.winLine) {
             drawWinningLine(
                 saveData.winLine,
@@ -171,25 +194,20 @@ const displayController = (() => {
         
         updateDisplay();
         updateScoreUI();
-        if (saveData.endGame) {
-            displayWin.innerHTML =
-            `<span class="bg-green-500 text-white px-4 py-2 rounded-xl">
-                ${
-                    saveData.winnerMark === "X"
-                        ? saveData.player1.name
-                        : saveData.player2.name
-                } win!
-            </span>`;
+        switch(saveData.status){
 
-            displayTurn.innerHTML = `<span class="text-red-500 font-bold">Game Has Ended</span>`;
-            playAgain.classList.remove('invisible');
-        }
-        else {
-            displayTurn.innerText = 
-            `Turn : ${saveData.currentPlayer === 'X' 
-            ? saveData.player1.name 
-            : saveData.player2.name
-            }`;    
+            case "playing":
+                displayTurn.innerText =
+                `Turn : ${saveData.currentPlayerName}`;
+                break;
+
+            case "win":
+                renderWinner(saveData.winner.name);
+                break;
+
+            case "draw":
+                renderDraw();
+                break;
         }
         reset.classList.remove('hidden')
     }
@@ -244,12 +262,14 @@ const displayController = (() => {
             */
             if (result.status === 'refuse') return;
 
-            storageController.save(
-                gameController.getState()
-            );
-
+            storageController.save(gameController.getState());
             updateDisplay();
-            popScale(e.target);
+            const canAnimate = ["playing", "win", "draw"];
+
+            if (canAnimate.includes(result.status)) {
+                popScale(e.target);
+            }
+            
             
             switch (result.status) {
                 case "refuse":
@@ -265,7 +285,7 @@ const displayController = (() => {
                     showDraw();
                     break;
             }
-            console.log(result);
+            
         }); 
     });
 
@@ -284,9 +304,7 @@ const displayController = (() => {
         const { player1 } = gameController.getPlayers();
         updateTurn(player1);
 
-        storageController.save(
-            gameController.getState()
-        );
+        storageController.save(gameController.getState());
 
         updateDisplay();
         clearWinningLine();
