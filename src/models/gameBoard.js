@@ -3,7 +3,7 @@ const gameBoard = (() => {
     // variable board
     let board = ["", "","", "","", "","", "",""];
     // get the board
-    const getBoard = () => board;
+    const getBoard = () => [...board];
 
     // place the pawn to prevent overwrite
     const placePawn = (index, mark) => {

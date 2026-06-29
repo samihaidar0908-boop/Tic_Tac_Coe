@@ -1,22 +1,27 @@
-// storage function
+/* the function to save the data game (every time the data changes), 
+load data game (if user click refresh in web, the save works in load), 
+and clearing the data game (if user click reset)
+*/
+
 const storageController  = (() => {
-    // save data
+    // save data every time the data changes
     const save = (data) => {
         localStorage.setItem("TicTacCoe", JSON.stringify(data));
     }
-    // load data
+    // load data with json.parse which function to wrap all save data in JSON (object)
     const load = () => {
         return JSON.parse(localStorage.getItem("TicTacCoe"));
     }
-    // clear data (if user klik reset)
+/*  if user klik reset and click button reset
+    and click confirm reset, it will be reset all 
+    (including score, player (default value : player 1, player 2), board, lineBoard, winner) */    
     const clear = () => {
         localStorage.removeItem("TicTacCoe");
     }
-
-    //returns data as an object for reuse
+    /* Returns the complete game state as an object.
+    Used by storageController to save the current game. */
     return { save, load, clear }
 })();
 
-// Returns the complete game state as an object.
-// Used by storageController to save the current game.
+// export to import the function to displayController
 export default storageController;

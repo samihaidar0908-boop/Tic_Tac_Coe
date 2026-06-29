@@ -11,43 +11,39 @@ import {
 
 const displayController = (() => {
 
-    // ====catch id and element=====
+    // ====catch id and element to listener , innerText, and function which is necessary=====
 
-    // catch button
+    // catch button to responsif web (submit player data, reset data, playAgain, reset confirm in dialog)
     const startButton = document.getElementById('startBtn');
     const btnCnfrm = document.getElementById('resetConfirm');
     const playAgain = document.getElementById('playAgain');
     const reset = document.getElementById('resetAll');
 
-    // catch display Win and Turn
+    // catch display Win and Turn (to annoucent the winner and turn and end Game to display UI)
     const displayTurn = document.getElementById('turn');
     const displayWin = document.getElementById('winner');
 
-    // catch dialog
+    // catch dialog (Input player name data , reset alert)
     const dialogForm = document.getElementById('dialogForm');
     const dialogReset = document.getElementById('resetAlert');
 
-    // catch index and cell
+    // catch class selector All index and cell (to determine place the mark in the pawn)
     const cells = document.querySelectorAll('.clicked');
 
-    // catch input and error input
+    // catch input and error input (input use sent the data player and error alert if the condition input inconsistent with the conditions if)
     const inputP1 = document.getElementById('inputP1');
     const inputP2 = document.getElementById('inputP2');
     const errX = document.getElementById('errX');
     const errO = document.getElementById('errO');
 
-    // catch score player 1 and player 2
+    // catch score player 1 and player 2 (score will be increase 1 if either player win.)
     const scoreP1 = document.getElementById('scoreX');
     const scoreP2 = document.getElementById('scoreO');   
 
-    const updateDisplay = () => {
-        const nowPawn = gameBoard.getBoard();
 
-        cells.forEach((cell, index) => {
-            renderCell(cell, nowPawn[index]);
-        });    
-    };
 
+    /* to rendering cell mark , if u wanna a colorfull text X and O,
+    you must to adding this function (optional) */
     const renderCell = (cell, value) => {
         cell.textContent = value;
 
@@ -61,17 +57,32 @@ const displayController = (() => {
             cell.classList.add('text-blue-500');
         }
     }
-    // score UI
+    
+    /* this is a necessary of display controller.
+       cause it which update display when user klik the pawn.
+       without it, the display UI never update*/    
+    const updateDisplay = () => {
+            const nowPawn = gameBoard.getBoard();
+
+            cells.forEach((cell, index) => {
+                renderCell(cell, nowPawn[index]);
+            });    
+        };
+
+    // updateScore UI if the score increase or the score reset.
     const updateScoreUI = () => {
         const players = gameController.getPlayers();
         scoreP1.innerText = `${players.player1.name} : ${players.player1.score}`;
         scoreP2.innerText = `${players.player2.name} : ${players.player2.score}`;
     };
 
+    /* to drawingLine if the condition win. else the condition draw
+    the drawingLine would'nt runned. Call drawLine function if user win */
     const  drawWinningLine = (winningArray, markWinner, line = true) => {
         const lineDiv = document.getElementById('winningLine');
         const winString = winningArray.join(',');
 
+        // styling place where's line placed (position must absolute and container relative in HTML)
         const lineStyles = {
             "0,1,2": { top: "16%", left: "2%", width: "96%", transform: "rotate(0deg)", origin: "left center" },
             "3,4,5": { top: "50%", left: "2%", width: "96%", transform: "rotate(0deg)", origin: "left center" },
@@ -84,14 +95,19 @@ const displayController = (() => {
             "0,4,8": { top: "2%", left: "2%", width: "138%", transform: "rotate(45deg)", origin: "top left" },
             "2,4,6": { top: "2%", right: "2%", left: "auto", width: "138%", transform: "rotate(-45deg)", origin: "top right" }
         };
+
+        // Catch the array joining
         const config = lineStyles[winString];
 
+        // if condition, X win it would line red line color.
         if (markWinner === "X") {
             lineDiv.classList.add('bg-red-500')
         }
+        // else condition (O win), it would draw blue line color
         else {
             lineDiv.classList.add('bg-blue-500')
         }
+        // styling display (to show), width (also show the width), top (to adjust the winner)
         lineDiv.style.display = "block";
         lineDiv.style.width = "0px"
         lineDiv.style.top = config.top;
@@ -101,6 +117,7 @@ const displayController = (() => {
         lineDiv.style.transformOrigin = config.origin;
         lineDiv.style.transform = config.transform;
 
+        // to check the condition if line true, it can animate. else it return line without animate
         if (line) {
             lineDiv.style.width = "0px";
             setTimeout(() => {
@@ -112,12 +129,13 @@ const displayController = (() => {
         }
     }
 
-
+    // update turn in display function
     const updateTurn = (player) => {
         displayTurn.innerText = `Turn : ${player.name}`;
         fadeIn(displayTurn);
     }
 
+    // rendering UI the winner and gameEnded + show play again btn
     const renderWinner = (winnerName) => {
         displayWin.innerHTML =
         `<span class="bg-green-500 text-white px-4 py-2 rounded-xl">
@@ -132,11 +150,10 @@ const displayController = (() => {
         playAgain.classList.remove("invisible");
     }
 
+    // showWinner function to render the animate 
     const showWinner = (result) => {
         renderWinner(result.winner.name);
         drawWinningLine(result.line, result.winner.mark);
-
-        playAgain.classList.remove('invisible');
 
         fadeSlideDown(displayWin);
         fadeIn(displayTurn);
@@ -145,6 +162,7 @@ const displayController = (() => {
         updateScoreUI();
     }
 
+    // rendering UI the draw and gameEnded + show play again btn
     const renderDraw = () => {
         displayWin.innerHTML = "<span class='bg-gray-500 text-white px-4 py-2 rounded-xl font-bold'>DRAW</span>";
         displayTurn.innerHTML =
@@ -155,6 +173,7 @@ const displayController = (() => {
         playAgain.classList.remove("invisible");
     }
 
+    // showWinner function to render the animate 
     const showDraw = () => {
         renderDraw()
 
@@ -165,6 +184,7 @@ const displayController = (() => {
         popScale(playAgain);        
     }
 
+    // clear line
     const clearWinningLine = () => {
         const lineDiv = document.getElementById('winningLine');
         lineDiv.style.display = "none";
@@ -258,7 +278,7 @@ const displayController = (() => {
             visual shrink effect caused by parent-border layout.
             looks kinda cool, don't touch for now. 
             if u want to return animation constant, remove if and const result such it will 
-            looks animation when clicked
+            looks animation when clicked and dont forget to remove canAnimate and if canAnimate
             */
             if (result.status === 'refuse') return;
 
@@ -314,29 +334,29 @@ const displayController = (() => {
     startButton.addEventListener('click', (e) => {
         e.preventDefault();
 
-        const inputName1 = document.getElementById('inputP1').value;
-        const inputName2 =  document.getElementById('inputP2').value;
-
         let isValid = true;
+
+        const inputPlayer1 = inputP1.value;
+        const inputPlayer2 = inputP2.value;
 
         errX.classList.add('hidden');
         errO.classList.add('hidden');
 
-        if (inputName1.trim() === "") {
+        if (inputPlayer1.trim() === "") {
             errX.classList.remove('hidden');
             isValid = false;
         }
 
-        if (inputName2.trim() === "") {
+        if (inputPlayer2.trim() === "") {
             errO.classList.remove('hidden');
             isValid = false;
         }
-        if (inputName1.length > 20) {
+        if (inputPlayer1.length > 20) {
             errX.classList.remove('hidden');
             errX.innerText = "name can't more then 20 char!"
             isValid = false;
         }
-        if (inputName2.length > 20) {
+        if (inputPlayer2.length > 20) {
             errO.classList.remove('hidden');
             errO.innerText = "name can't more than 20 char!"
             isValid = false;
@@ -350,7 +370,7 @@ const displayController = (() => {
 
             return;
         }
-        const result = gameController.startGame(inputName1, inputName2);
+        const result = gameController.startGame(inputPlayer1, inputPlayer2);
 
         storageController.save(
             gameController.getState()
